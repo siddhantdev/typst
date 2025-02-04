@@ -61,7 +61,7 @@ pub fn layout_mat(
         let ncols = rows.first().map_or(0, |row| row.len());
 
         for &offset in &aug.vline.0 {
-            if offset == 0 || offset.unsigned_abs() >= ncols {
+            if offset == 0 || offset.unsigned_abs() > ncols {
                 bail!(
                         elem.span(),
                         "cannot draw a vertical line after column {} of a matrix with {} columns",
@@ -254,8 +254,7 @@ fn layout_mat_body(
         x += gap.x;
     }
 
-    // Once all the columns are laid out, the total width can be calculated
-    let total_width = x - gap.x;
+    let total_width = if !(vline.0.contains(&(ncols as isize))) { x - gap.x } else { x };
 
     // This allows the horizontal lines to be laid out
     for line in hline.0 {
